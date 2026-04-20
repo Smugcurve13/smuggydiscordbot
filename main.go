@@ -7,13 +7,16 @@ import (
 	"os/signal"
 	"syscall"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"golang.org/x/crypto/ssh"
 )
 
 
 
 func main() {
+	fmt.Println(time.Now())
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error loading .env file")
@@ -55,9 +58,33 @@ func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate
 		case "!ping" :
 			session.ChannelMessageSend(message.ChannelID, "This is ping function")
 		case "!stats" :
-			session.ChannelMessageSend(message.ChannelID, "This is stats function")
+			stats, err := getStats()
+			if err != nil {
+				session.ChannelMessageSend(message.ChannelID, "Error Getting Stats")
+				return
+			}
+			session.ChannelMessageSend(message.ChannelID, stats)
 		case "!help" :
 			session.ChannelMessageSend(message.ChannelID, "This is help function")
 		}
 	}
+}
+
+func getStats() (string, error) {
+	host := os.Getenv("SSH_HOST")
+	user := os.Getenv("SSH_USER")
+	pass := os.Getenv("SSH_PASS")
+	config := ssh.ClientConfig{
+		User:	user,
+		Auth:	[]ssh.AuthMethod{ssh.Password(pass)},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+	client, err := ssh.Dial("tcp", host+":22", &config)
+	if err != nil {
+		fmt.Printf("Error Ocurred: %v", err)
+	}
+	
+	defer client.Close()
+	fmt.Println("SSH CONNECTED !!")
+	return "" , nil
 }
