@@ -25,7 +25,7 @@ jobs:
             -   name: Build for linux
                 run: GOOS=linux GOARCH=amd64 go build -o smuggydiscordbot . 
             
-            -   name: Deploy to server
+            -   name: Deploy to server 
                 run: |
                     sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no smuggydiscordbot ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/smug/smuggydiscordbot
                     sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "sudo systemctl restart smuggybot"
