@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
-	
+	"strconv"
+	"strings"
+
 	"golang.org/x/crypto/ssh"
 )
 
@@ -78,3 +80,68 @@ type ServerStats struct {
 	DiskUsedPercent float64
 	TempCelsius  	float64
 }
+
+func getRawStats() (ServerStats, error) {
+	client, err := connectSSH()
+	if err != nil {
+		fmt.Println("Error in connecting SSH")
+	}
+	defer client.Close()
+
+	cpu_cmd := `grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$3+$4+$5)} END {print usage"%"}'`
+	temp_cmd := `sensors | grep "Package id 0" | awk '{print $4}'`
+	ram_cmd := `free -m | awk 'NR==2{printf "%.2f", $3*100/$2}'`
+	disk_cmd := `df / | awk 'NR==2{print $5}' | tr -d '%'`
+
+	cpu , err2 := runCommand(client, cpu_cmd)
+	if err2 != nil {
+		fmt.Println("Error while excecuting CPU stats command")
+	}
+	temp , err4 := runCommand(client, temp_cmd)
+	if err4 != nil {
+		fmt.Println("Error while excecuting TEMPERATURE stats command")
+	}
+	ram, err := runCommand(client, ram_cmd)
+	if err != nil {
+		fmt.Println("Error while executing RAM stats command")
+	}
+	disk, err := runCommand(client, disk_cmd)
+	if err != nil {
+		fmt.Println("Error while executing DISK stats command")
+	}
+
+	cpu = strings.TrimSpace(cpu)
+	cpu = strings.TrimSuffix(cpu, "%")
+	cpu_float , err := strconv.ParseFloat(cpu, 64)
+	if err != nil {
+		fmt.Println("Error in String Converting")
+	}
+
+	temp = strings.TrimSpace(temp)
+	temp = strings.TrimPrefix(temp, "+")
+	temp = strings.TrimSuffix(temp, "°C")
+	temp_float, err := strconv.ParseFloat(temp, 64)
+	if err != nil {
+		fmt.Println("Error in string conversion")
+	}
+
+	ram = strings.TrimSpace(ram)
+	ram_float , err := strconv.ParseFloat(ram, 64)
+	if err != nil {
+		fmt.Println("Error in string conversion")
+	}
+	disk = strings.TrimSpace(disk)
+	disk_float , err := strconv.ParseFloat(disk, 64)
+	if err != nil {
+		fmt.Println("Error in string conversion")
+	}
+
+	s := ServerStats{
+		RAMUsedPercent: ram_float,
+		CPUPercent: cpu_float,
+		DiskUsedPercent: disk_float,
+		TempCelsius: temp_float,
+	}
+	return s , nil
+
+}	
