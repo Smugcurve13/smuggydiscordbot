@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"os/signal"
 	"syscall"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -45,4 +46,18 @@ func main() {
 
 func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
 	fmt.Println("Message Received")
+	if message.Author.ID == session.State.User.ID {
+		return
+	}
+	msg := message.Content
+	if strings.HasPrefix(msg, "!") {
+		switch msg {
+		case "!ping" :
+			session.ChannelMessageSend(message.ChannelID, "This is ping function")
+		case "!stats" :
+			session.ChannelMessageSend(message.ChannelID, "This is stats function")
+		case "!help" :
+			session.ChannelMessageSend(message.ChannelID, "This is help function")
+		}
+	}
 }
