@@ -20,6 +20,10 @@ func main() {
 	}
 
 	token := os.Getenv("DISCORD_TOKEN")
-	fmt.Println(token)
-
+	discord,err := discordgo.New("Bot " + token)
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		os.Exit(1)
+	}
+	fmt.Println(discord)
 }
