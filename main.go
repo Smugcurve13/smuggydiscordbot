@@ -48,10 +48,10 @@ func main() {
 }
 
 func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
-	fmt.Println("Message Received")
 	if message.Author.ID == session.State.User.ID {
 		return
 	}
+	fmt.Println("Message Received")
 	msg := message.Content
 	if strings.HasPrefix(msg, "!") {
 		switch msg {
@@ -86,5 +86,16 @@ func getStats() (string, error) {
 	
 	defer client.Close()
 	fmt.Println("SSH CONNECTED !!")
-	return "" , nil
+	session, err2 := client.NewSession()
+	if err2 != nil {
+		fmt.Printf("Error in Creating New Session %v", err2)
+	}
+	defer session.Close()
+	output, err3 := session.Output("free -m")
+	if err3 != nil {
+		fmt.Printf("Error in Running Command %v", err3)
+	}
+	str_output := string(output)
+	fmt.Printf("Stats are : %v", str_output)
+	return str_output , nil
 }
