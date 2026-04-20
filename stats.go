@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 
@@ -41,31 +42,35 @@ func runCommand(client *ssh.Client, command string) (string, error) {
 	return str_output, nil
 }
 
-func getStats() (string, error) {
-	client, err := connectSSH()
+func runLocalCommand(command string) (string, error) {
+	output , err := exec.Command("bash","-c",command).Output()
 	if err != nil {
-		fmt.Printf("Error in connecting to SSH: %v", err)
-	}
-	defer client.Close()
+		fmt.Println("Error while running local command")
+	} 
+	fmt.Println(output)
+	return string(output) , nil
+}
+
+func getStats() (string, error) {
 
 	ram_cmd := "free -m"
 	cpu_cmd := `grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$3+$4+$5)} END {print usage"%"}'`
 	disk_cmd := "df -h /"
 	temp_cmd := `sensors | grep "Package id 0" | awk '{print $4}'`
 	
-	ram , err1 := runCommand(client, ram_cmd)
+	ram , err1 := runLocalCommand(ram_cmd)
 	if err1 != nil {
 		fmt.Println("Error while excecuting RAM stats command")
 	}
-	cpu , err2 := runCommand(client, cpu_cmd)
+	cpu , err2 := runLocalCommand(cpu_cmd)
 	if err2 != nil {
 		fmt.Println("Error while excecuting CPU stats command")
 	}
-	disk , err3 := runCommand(client, disk_cmd)
+	disk , err3 := runLocalCommand(disk_cmd)
 	if err3 != nil {
 		fmt.Println("Error while excecuting DISK stats command")
 	}
-	temp , err4 := runCommand(client, temp_cmd)
+	temp , err4 := runLocalCommand(temp_cmd)
 	if err4 != nil {
 		fmt.Println("Error while excecuting TEMPERATURE stats command")
 	}
@@ -93,19 +98,19 @@ func getRawStats() (ServerStats, error) {
 	ram_cmd := `free -m | awk 'NR==2{printf "%.2f", $3*100/$2}'`
 	disk_cmd := `df / | awk 'NR==2{print $5}' | tr -d '%'`
 
-	cpu , err2 := runCommand(client, cpu_cmd)
+	cpu , err2 := runLocalCommand(cpu_cmd)
 	if err2 != nil {
 		fmt.Println("Error while excecuting CPU stats command")
 	}
-	temp , err4 := runCommand(client, temp_cmd)
+	temp , err4 := runLocalCommand(temp_cmd)
 	if err4 != nil {
 		fmt.Println("Error while excecuting TEMPERATURE stats command")
 	}
-	ram, err := runCommand(client, ram_cmd)
+	ram, err := runLocalCommand(ram_cmd)
 	if err != nil {
 		fmt.Println("Error while executing RAM stats command")
 	}
-	disk, err := runCommand(client, disk_cmd)
+	disk, err := runLocalCommand(disk_cmd)
 	if err != nil {
 		fmt.Println("Error while executing DISK stats command")
 	}
