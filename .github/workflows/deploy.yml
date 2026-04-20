@@ -1,0 +1,31 @@
+name: Deploy Smuggy Discord Bot
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v3
+            
+            -   name: Set up Go
+                uses: actions/setup-go@v4
+                with:
+                    go-version: '1.22'
+            
+            -   name: Connect Tailscale
+                uses: tailscale/github-action@v2
+                with:
+                    authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+        
+            -   name: Build for linux
+                run: GOOS=linux GOARCH=amd64 go build -o smuggydiscordbot . 
+            
+            -   name: Deploy to server
+                run: |
+                    sshpass -p "${{ secrets.SERVER_PASSWORD }}" scp -o StrictHostKeyChecking=no smuggydiscordbot ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/smug/smuggydiscordbot
+                    sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "sudo systemctl restart smuggybot"
