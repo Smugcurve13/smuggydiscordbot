@@ -42,7 +42,7 @@ func runCommand(client *ssh.Client, command string) (string, error) {
 func getStats() (string, error) {
 	client, err := connectSSH()
 	if err != nil {
-		fmt.Printf("Error in connecting to SSH: ", err)
+		fmt.Printf("Error in connecting to SSH: %v", err)
 	}
 	defer client.Close()
 
