@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"github.com/joho/godotenv"
-	"os/signal"
-	"syscall"
+	// "os/signal"
+	// "syscall"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -20,10 +20,19 @@ func main() {
 	}
 
 	token := os.Getenv("DISCORD_TOKEN")
-	discord,err := discordgo.New("Bot " + token)
+	discord, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println("Error loading .env file")
 		os.Exit(1)
 	}
-	fmt.Println(discord)
+	discord.Identify.Intents = discordgo.IntentsGuildMessages
+	discorderr := discord.Open()
+	if discorderr != nil {
+		fmt.Printf("Error in opening Discord Session : ", discorderr)
+		os.Exit(1)
+	}
+	fmt.Println("Smuggy Bot is Running")
+
+
+
 }
