@@ -26,9 +26,10 @@ func main() {
 		os.Exit(1)
 	}
 	discord.Identify.Intents = discordgo.IntentsGuildMessages
+	discord.AddHandler(MessageHandler)
 	discorderr := discord.Open()
 	if discorderr != nil {
-		fmt.Printf("Error in opening Discord Session : ", discorderr)
+		fmt.Printf("Error in opening Discord Session : %v", discorderr)
 		os.Exit(1)
 	}
 
@@ -40,4 +41,8 @@ func main() {
 	discord.Close()
 	fmt.Println("Smuggy Bot is shutting down")
 
+}
+
+func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
+	fmt.Println("Message Received")
 }
