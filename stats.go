@@ -24,7 +24,6 @@ func connectSSH() (*ssh.Client, error) {
 		fmt.Printf("Error Ocurred: %v", err)
 	}
 	
-	fmt.Println("SSH CONNECTED !!")
 	return client , nil
 }
 
@@ -47,7 +46,7 @@ func runLocalCommand(command string) (string, error) {
 	if err != nil {
 		fmt.Println("Error while running local command")
 	} 
-	fmt.Println(output)
+	fmt.Println(string(output))
 	return string(output) , nil
 }
 
