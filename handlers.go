@@ -7,6 +7,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var WHITELISTED_IDS = []string{"786964843315986452" , "660947929057722388"}
+
 func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.ID == session.State.User.ID {
 		return
@@ -26,6 +28,15 @@ func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate
 			session.ChannelMessageSend(message.ChannelID, stats)
 		case "!help" :
 			session.ChannelMessageSend(message.ChannelID, "This is help function")
+		case "!run" :
+			userID := message.Author.ID
+			for _, id := range WHITELISTED_IDS {
+				if userID == id {
+					session.ChannelMessageSend(message.ChannelID, "Authorized")
+					return
+				}
+				session.ChannelMessageSend(message.ChannelID, "Not Authorised")
+			}
 		}
 	}
 }
