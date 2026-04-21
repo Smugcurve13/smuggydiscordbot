@@ -44,9 +44,8 @@ func runCommand(client *ssh.Client, command string) (string, error) {
 func runLocalCommand(command string) (string, error) {
 	output , err := exec.Command("bash","-c",command).Output()
 	if err != nil {
-		fmt.Println("Error while running local command")
+		fmt.Printf("Error while running local command: %v", err)
 	} 
-	fmt.Println(string(output))
 	return string(output) , nil
 }
 

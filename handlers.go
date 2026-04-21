@@ -56,6 +56,13 @@ func MessageHandlerv2(session *discordgo.Session, message *discordgo.MessageCrea
 	msg := message.Content
 	if strings.HasPrefix(msg, "!") {
 		msg := strings.TrimPrefix(msg, "!")
-		fmt.Println(msg)
+		command, argument, _ := strings.Cut(msg, " ")
+		if command == "run" {
+			output, err := runLocalCommand(argument)
+			if err != nil {
+				fmt.Println("Error")
+			}
+			session.ChannelMessageSend(message.ChannelID, output)
+		}
 	}
 }
