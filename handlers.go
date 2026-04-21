@@ -59,13 +59,24 @@ func MessageHandlerv2(session *discordgo.Session, message *discordgo.MessageCrea
 		msg := strings.TrimPrefix(msg, "!")
 		command, argument, _ := strings.Cut(msg, " ")
 		if command == "run" {
-			fmt.Println(argument)
-			output, err := runLocalCommand(argument)
-			if err != nil {
-				fmt.Println("Error")
+			userID := message.Author.ID
+			found := false
+			for _, id := range WHITELISTED_IDS {
+				if userID == id {
+					found = true
+					break
+				}
 			}
-			output = fmt.Sprintf("``` %s ```", output)
-			session.ChannelMessageSend(message.ChannelID, output)
+			if found {
+				output, err := runLocalCommand(argument)
+				if err != nil {
+					fmt.Println("Error")
+				}
+				output = fmt.Sprintf("``` %s ```", output)
+				session.ChannelMessageSend(message.ChannelID, output)
+			} else {
+				session.ChannelMessageSend(message.ChannelID, "Not Authorised")
+			}
 		}
 		if command == "stats" {
 			stats, err := getStats()
