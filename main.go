@@ -27,7 +27,7 @@ func main() {
 		os.Exit(1)
 	}
 	discord.Identify.Intents = discordgo.IntentsGuildMessages
-	discord.AddHandler(MessageHandler)
+	discord.AddHandler(MessageHandlerv2)
 	discorderr := discord.Open()
 	if discorderr != nil {
 		fmt.Printf("Error in opening Discord Session : %v", discorderr)

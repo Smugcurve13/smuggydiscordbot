@@ -28,7 +28,7 @@ func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate
 			session.ChannelMessageSend(message.ChannelID, stats)
 		case "!help" :
 			session.ChannelMessageSend(message.ChannelID, "This is help function")
-		case "!run" :
+		if msg[:5] == "!run" {
 			userID := message.Author.ID
 			found := false
 			for _, id := range WHITELISTED_IDS {
@@ -38,10 +38,24 @@ func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate
 				}
 			}
 			if found {
-				session.ChannelMessageSend(message.ChannelID, "Authorized")
+				session.ChannelMessageSend(message.ChannelID, msg)
+
 			} else {
 				session.ChannelMessageSend(message.ChannelID, "Not Authorised")
 			}
 		}
+		}
+	}
+}
+
+func MessageHandlerv2(session *discordgo.Session, message *discordgo.MessageCreate) {
+	if message.Author.ID == session.State.User.ID {
+		return
+	}
+	fmt.Println("Message Received")
+	msg := message.Content
+	if strings.HasPrefix(msg, "!") {
+		msg := strings.TrimPrefix(msg, "!")
+		fmt.Println(msg)
 	}
 }
