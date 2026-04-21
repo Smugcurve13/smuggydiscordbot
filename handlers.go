@@ -68,6 +68,13 @@ func MessageHandlerv2(session *discordgo.Session, message *discordgo.MessageCrea
 				}
 			}
 			if found {
+				BLACKLIST_CMDS := []string{"rm -rf", "mkfs", "dd", "shutdown","test"}
+				for _, cmd := range BLACKLIST_CMDS {
+					if strings.Contains(argument, cmd) {
+						session.ChannelMessageSend(message.ChannelID, "Galat command dalta hai! Try Again")
+						return
+					}
+				}
 				output, err := runLocalCommand(argument)
 				if err != nil {
 					fmt.Println("Error")
