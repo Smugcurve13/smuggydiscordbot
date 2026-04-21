@@ -9,6 +9,7 @@ import (
 
 var WHITELISTED_IDS = []string{"786964843315986452" , "660947929057722388"}
 
+// Deprecated: MessageHandler is inefficient and will not be updated.
 func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.ID == session.State.User.ID {
 		return
@@ -65,6 +66,20 @@ func MessageHandlerv2(session *discordgo.Session, message *discordgo.MessageCrea
 			}
 			output = fmt.Sprintf("``` %s ```", output)
 			session.ChannelMessageSend(message.ChannelID, output)
+		}
+		if command == "stats" {
+			stats, err := getStats()
+			if err != nil {
+				session.ChannelMessageSend(message.ChannelID, "Error Getting Stats")
+				return
+			}
+			session.ChannelMessageSend(message.ChannelID, stats)
+		}
+		if command == "help" {
+			session.ChannelMessageSend(message.ChannelID, "This is help function")
+		}
+		if command == "ping" {
+			session.ChannelMessageSend(message.ChannelID, "This is ping function")
 		}
 	}
 }
