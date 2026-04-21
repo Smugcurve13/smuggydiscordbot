@@ -30,11 +30,16 @@ func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate
 			session.ChannelMessageSend(message.ChannelID, "This is help function")
 		case "!run" :
 			userID := message.Author.ID
+			found := false
 			for _, id := range WHITELISTED_IDS {
 				if userID == id {
-					session.ChannelMessageSend(message.ChannelID, "Authorized")
-					return
+					found = true
+					break
 				}
+			}
+			if found {
+				session.ChannelMessageSend(message.ChannelID, "Authorized")
+			} else {
 				session.ChannelMessageSend(message.ChannelID, "Not Authorised")
 			}
 		}
