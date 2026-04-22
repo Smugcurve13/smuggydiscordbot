@@ -41,9 +41,8 @@ func runFunc(message *discordgo.MessageCreate, argument string) string {
 		}
 		output, err := runLocalCommand(argument)
 		if err != nil {
-			return "Unable to execute command"
+			fmt.Println("Error")
 		}
-		output = fmt.Sprintf("```%s```", output)
 		return output
 	} else {
 		return "Not Authorised"

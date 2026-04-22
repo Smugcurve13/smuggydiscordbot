@@ -115,6 +115,7 @@ func MessageHandlerv3(session *discordgo.Session, message *discordgo.MessageCrea
 		user_command, argument, _ := strings.Cut(msg, " ")
 		if cmd_func, exists := COMMAND_REGISTRY[user_command]; exists {
 			output := cmd_func(message, argument)
+			output = fmt.Sprintf("```%s```",output)
 			session.ChannelMessageSend(message.ChannelID, output)
 		}
 	}
