@@ -9,7 +9,7 @@ import (
 
 var WHITELISTED_IDS = []string{"786964843315986452" , "660947929057722388"}
 
-var COMMAND_REGISTRY = map[string]func(string)string{"help": helpFunc, "ping": pingFunc, "stats": statsFunc} 
+var COMMAND_REGISTRY = map[string]func(*discordgo.MessageCreate, string)string{"help": helpFunc, "ping": pingFunc, "stats": statsFunc, "run":runFunc} 
 
 // Deprecated: MessageHandler is inefficient and will not be updated.
 func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
@@ -114,7 +114,7 @@ func MessageHandlerv3(session *discordgo.Session, message *discordgo.MessageCrea
 		msg := strings.TrimPrefix(msg, "!")
 		user_command, argument, _ := strings.Cut(msg, " ")
 		if cmd_func, exists := COMMAND_REGISTRY[user_command]; exists {
-			output := cmd_func(argument)
+			output := cmd_func(message, argument)
 			session.ChannelMessageSend(message.ChannelID, output)
 		}
 	}

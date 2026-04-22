@@ -7,15 +7,15 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func helpFunc(arg string) string {
+func helpFunc(message *discordgo.MessageCreate, arg string) string {
 	return "This is help function"
 }
 
-func pingFunc(arg string) string {
+func pingFunc(message *discordgo.MessageCreate, arg string) string {
 	return "This is ping function"
 }
 
-func statsFunc(arg string) string {
+func statsFunc(message *discordgo.MessageCreate, arg string) string {
 	stats, err := getStats()
 	if err != nil {
 		return "Error Getting Stats"
@@ -23,7 +23,7 @@ func statsFunc(arg string) string {
 	return stats
 }
 
-func runFunc(session *discordgo.Session, message *discordgo.MessageCreate, argument string) {
+func runFunc(message *discordgo.MessageCreate, argument string) string {
 	userID := message.Author.ID
 	found := false
 	for _, id := range WHITELISTED_IDS {
@@ -36,18 +36,17 @@ func runFunc(session *discordgo.Session, message *discordgo.MessageCreate, argum
 		BLACKLIST_CMDS := []string{"rm -rf", "mkfs", "dd", "shutdown","test"}
 		for _, cmd := range BLACKLIST_CMDS {
 			if strings.Contains(argument, cmd) {
-				session.ChannelMessageSend(message.ChannelID, "Galat command dalta hai! Try Again")
-				return
+				return "Galat command dalta hai! Try Again"
 			}
 		}
 		output, err := runLocalCommand(argument)
 		if err != nil {
 			fmt.Println("Error")
 		}
-		output = fmt.Sprintf("``` %s ```", output)
-		session.ChannelMessageSend(message.ChannelID, output)
+		output = fmt.Sprintf("```%s```", output)
+		return output
 	} else {
-		session.ChannelMessageSend(message.ChannelID, "Not Authorised")
+		return "Not Authorised"
 	}
 }
 
