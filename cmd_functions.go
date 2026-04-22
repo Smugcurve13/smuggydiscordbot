@@ -33,6 +33,11 @@ func runFunc(message *discordgo.MessageCreate, argument string) string {
 		}
 	}
 	if found {
+		argument = strings.TrimSpace(argument)
+		if argument == "" {
+			msg := "Invalid usage: missing command\n\nUsage:\n!run <command>\n\nExample:\n!run echo hello"
+			return msg
+		}
 		BLACKLIST_CMDS := []string{"rm -rf", "mkfs", "dd", "shutdown","test"}
 		for _, cmd := range BLACKLIST_CMDS {
 			if strings.Contains(argument, cmd) {
