@@ -15,13 +15,12 @@ func pingFunc(arg string) string {
 	return "This is ping function"
 }
 
-func statsFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string)  {
+func statsFunc(arg string) string {
 	stats, err := getStats()
 	if err != nil {
-		session.ChannelMessageSend(message.ChannelID, "Error Getting Stats")
-		return
+		return "Error Getting Stats"
 	}
-	session.ChannelMessageSend(message.ChannelID, stats)
+	return stats
 }
 
 func runFunc(session *discordgo.Session, message *discordgo.MessageCreate, argument string) {

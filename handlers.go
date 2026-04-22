@@ -9,7 +9,7 @@ import (
 
 var WHITELISTED_IDS = []string{"786964843315986452" , "660947929057722388"}
 
-var COMMAND_REGISTRY = map[string]func(string)string{"help": helpFunc, "ping": pingFunc} 
+var COMMAND_REGISTRY = map[string]func(string)string{"help": helpFunc, "ping": pingFunc, "stats": statsFunc} 
 
 // Deprecated: MessageHandler is inefficient and will not be updated.
 func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
