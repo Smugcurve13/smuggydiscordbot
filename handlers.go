@@ -9,6 +9,8 @@ import (
 
 var WHITELISTED_IDS = []string{"786964843315986452" , "660947929057722388"}
 
+var COMMAND_REGISTRY = map[string]func(*discordgo.MessageCreate, string)string{"help": helpFunc, "ping": pingFunc, "stats": statsFunc, "run":runFunc} 
+
 // Deprecated: MessageHandler is inefficient and will not be updated.
 func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.ID == session.State.User.ID {
@@ -48,7 +50,7 @@ func MessageHandler(session *discordgo.Session, message *discordgo.MessageCreate
 		}
 	}
 }
-
+// Deprecated: MessageHandlerv2 is inefficient and will not be updated.
 func MessageHandlerv2(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.ID == session.State.User.ID {
 		return
@@ -98,6 +100,23 @@ func MessageHandlerv2(session *discordgo.Session, message *discordgo.MessageCrea
 		}
 		if command == "ping" {
 			session.ChannelMessageSend(message.ChannelID, "This is ping function")
+		}
+	}
+}
+
+func MessageHandlerv3(session *discordgo.Session, message *discordgo.MessageCreate) {
+	if message.Author.ID == session.State.User.ID {
+		return
+	}
+	fmt.Println("Message Received")
+	msg := message.Content
+	if strings.HasPrefix(msg, "!") {
+		msg := strings.TrimPrefix(msg, "!")
+		user_command, argument, _ := strings.Cut(msg, " ")
+		if cmd_func, exists := COMMAND_REGISTRY[user_command]; exists {
+			output := cmd_func(message, argument)
+			output = fmt.Sprintf("```%s```",output)
+			session.ChannelMessageSend(message.ChannelID, output)
 		}
 	}
 }
