@@ -18,7 +18,7 @@ func pingFunc(message *discordgo.MessageCreate, arg string) string {
 func statsFunc(message *discordgo.MessageCreate, arg string) string {
 	stats, err := getStats()
 	if err != nil {
-		return "Error Getting Stats"
+		return "Unable to fetch system stats"
 	}
 	return stats
 }
@@ -41,7 +41,7 @@ func runFunc(message *discordgo.MessageCreate, argument string) string {
 		}
 		output, err := runLocalCommand(argument)
 		if err != nil {
-			fmt.Println("Error")
+			return "Unable to execute command"
 		}
 		output = fmt.Sprintf("```%s```", output)
 		return output
