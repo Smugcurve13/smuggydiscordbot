@@ -26,6 +26,7 @@ func statsFunc(message *discordgo.MessageCreate, arg string) string {
 func runFunc(message *discordgo.MessageCreate, argument string) string {
 	userID := message.Author.ID
 	found := false
+	WHITELISTED_IDS := getWhitelistedIDS()
 	for _, id := range WHITELISTED_IDS {
 		if userID == id {
 			found = true
