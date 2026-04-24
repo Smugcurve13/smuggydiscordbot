@@ -71,3 +71,18 @@ func roastFunc(message *discordgo.MessageCreate, lastRoast string) string {
 	} 
 	return selection
 }
+
+func quizFunc(message *discordgo.MessageCreate, arg string) string {
+	// userId := message.Author.ID
+	db := QuizDB{
+		question: "What is smuggy's favourite number",
+		options:[]string{"420","67","69","786"},
+		answer_id: 0,
+	}
+	selection := 0
+	if selection == db.answer_id {
+		return "incoming"
+	} else {
+		return "You are not a quiz"
+	}
+}

@@ -7,7 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var COMMAND_REGISTRY = map[string]func(*discordgo.MessageCreate, string)string{"help": helpFunc, "ping": pingFunc, "stats": statsFunc, "run":runFunc, "roast":roastFunc } 
+var COMMAND_REGISTRY = map[string]func(*discordgo.MessageCreate, string)string{"help": helpFunc, "ping": pingFunc, "stats": statsFunc, "run":runFunc, "roast":roastFunc, "quiz": quizFunc } 
 
 func MessageHandlerv3(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.ID == session.State.User.ID {
