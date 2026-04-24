@@ -8,11 +8,11 @@ import (
 )
 
 func helpFunc(message *discordgo.MessageCreate, arg string) string {
-	return "This is help function"
+	return "Available commands: !ping, !help, !stats and !run <command> <argument>"
 }
 
 func pingFunc(message *discordgo.MessageCreate, arg string) string {
-	return "This is ping function"
+	return `Pong ! Type "!run" to get all available commands`
 }
 
 func statsFunc(message *discordgo.MessageCreate, arg string) string {
