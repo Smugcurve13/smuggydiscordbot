@@ -12,7 +12,7 @@ func helpFunc(message *discordgo.MessageCreate, arg string) string {
 }
 
 func pingFunc(message *discordgo.MessageCreate, arg string) string {
-	return `Pong ! Type "!run" to get all available commands`
+	return `Pong ! Type "!help" to get all available commands`
 }
 
 func statsFunc(message *discordgo.MessageCreate, arg string) string {
