@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"math/rand/v2"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -55,3 +56,18 @@ func runFunc(message *discordgo.MessageCreate, argument string) string {
 	}
 }
 
+func roastFunc(message *discordgo.MessageCreate, lastRoast string) string {
+	roasts := []string{"I’d agree with you, but then we’d both be wrong.",
+						"You’re the reason the gene pool needs a lifeguard.",
+						"I’ve been called worse by people who are much better.",
+						"You have the perfect face for radio and a great voice for silent films.",
+						"I forgot the world revolves around you. My apologies—how silly of me to think other people existed."}
+
+	idx := rand.IntN(len(roasts))
+	selection := roasts[idx]
+	if selection == lastRoast {
+		idx = (idx - 1) % len(roasts)
+		selection = roasts[idx]
+	} 
+	return selection
+}
