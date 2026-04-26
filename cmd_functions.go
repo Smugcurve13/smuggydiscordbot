@@ -8,15 +8,15 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func helpFunc(message *discordgo.MessageCreate, arg string) string {
+func helpFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
 	return "Available commands: !ping, !help, !stats and !run <command> <argument>"
 }
 
-func pingFunc(message *discordgo.MessageCreate, arg string) string {
+func pingFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
 	return `Pong ! Type "!help" to get all available commands`
 }
 
-func statsFunc(message *discordgo.MessageCreate, arg string) string {
+func statsFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
 	stats, err := getStats()
 	if err != nil {
 		return "Unable to fetch system stats"
@@ -24,7 +24,7 @@ func statsFunc(message *discordgo.MessageCreate, arg string) string {
 	return stats
 }
 
-func runFunc(message *discordgo.MessageCreate, argument string) string {
+func runFunc(session *discordgo.Session, message *discordgo.MessageCreate, argument string) string {
 	userID := message.Author.ID
 	found := false
 	WHITELISTED_IDS := getWhitelistedIDS()
@@ -56,7 +56,7 @@ func runFunc(message *discordgo.MessageCreate, argument string) string {
 	}
 }
 
-func roastFunc(message *discordgo.MessageCreate, lastRoast string) string {
+func roastFunc(session *discordgo.Session, message *discordgo.MessageCreate, lastRoast string) string {
 	roasts := []string{"I’d agree with you, but then we’d both be wrong.",
 						"You’re the reason the gene pool needs a lifeguard.",
 						"I’ve been called worse by people who are much better.",
@@ -72,7 +72,14 @@ func roastFunc(message *discordgo.MessageCreate, lastRoast string) string {
 	return selection
 }
 
-func quizFunc(message *discordgo.MessageCreate, arg string) string {
+func roastFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, lastRoast string) string {
+	targetUserID := message.Author.ID
+	test := fetchMessagesofUserID(session, message, targetUserID, 6)
+	fmt.Println(test)
+	return "check logs" 
+}
+
+func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
 	// userId := message.Author.ID
 	db := QuizDB{
 		question: "What is smuggy's favourite number",

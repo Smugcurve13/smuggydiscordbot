@@ -12,3 +12,9 @@ type QuizDB struct {
 	options		[]string
 	answer_id 	int
 }
+
+type UserMessage struct {
+	UserID		string
+	Username	string
+	Message 	[]string
+}
