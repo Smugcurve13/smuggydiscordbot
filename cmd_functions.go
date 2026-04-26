@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"strings"
 	"math/rand/v2"
+	"os"
+	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"google.golang.org/genai"
 )
 
 func helpFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
@@ -74,9 +78,12 @@ func roastFunc(session *discordgo.Session, message *discordgo.MessageCreate, las
 
 func roastFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, lastRoast string) string {
 	targetUserID := message.Author.ID
-	test := fetchMessagesofUserID(session, message, targetUserID, 6)
-	fmt.Println(test)
-	return "check logs" 
+	msgStruct := fetchMessagesofUserID(session, message, targetUserID, 6)
+	msgs := []string{}
+	msgs = msgStruct.Message
+	msgs2 := strings.Join(msgs, "")
+	result := aiRoast(msgs2)
+	return result 
 }
 
 func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
@@ -93,3 +100,38 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 		return "You are not a quiz"
 	}
 }
+
+func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
+	userID := message.Author.ID
+	found := false
+	WHITELISTED_IDS := getWhitelistedIDS()
+	for _, id := range WHITELISTED_IDS {
+		if userID == id {
+			found = true
+			break
+		}
+	}
+	if found {
+		apiKey := os.Getenv("GEMINI_API_KEY")
+		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+		defer cancel()
+		client := geminiClient(ctx, apiKey)
+
+		parts := []*genai.Part{
+			{Text: arg},
+		}
+		contents := []*genai.Content{{Parts: parts}}
+
+		response, err := client.Models.GenerateContent(ctx, "gemini-flash-lite-latest", contents, nil)
+		if err != nil {
+			fmt.Printf("GenerateContent Error : %s" , err)
+			return "Please try again Later , Model is Overloaded right now"
+		}
+		clean_response := cleanGeminiResponse(response)
+		return clean_response
+	} else {
+		return "Not Authorized"
+	}
+}
+
+
