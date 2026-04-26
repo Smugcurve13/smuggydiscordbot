@@ -17,17 +17,17 @@ func fetchMessagesofUserID(session *discordgo.Session, message *discordgo.Messag
 			userMessages = append(userMessages, m)
 		}
 	}
-	userSplice := []string{}
+	messageSplice := []string{}
 
 	for _, msg := range userMessages {
-		if msg.Author != nil && len(userSplice) < noOfMessages {
-			userSplice = append(userSplice, msg.Content) 
+		if msg.Author != nil && len(messageSplice) < noOfMessages {
+			messageSplice = append(messageSplice, msg.Content) 
 		}
 	}
 	u := UserMessage{
 		UserID: message.Author.ID,
 		Username: message.Author.Username,
-		Message: userSplice,
+		Message: messageSplice,
 	}
 	return u
 }
