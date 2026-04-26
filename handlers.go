@@ -7,7 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var COMMAND_REGISTRY = map[string]func(*discordgo.MessageCreate, string)string{"help": helpFunc, "ping": pingFunc, "stats": statsFunc, "run":runFunc, "roast":roastFunc } 
+var COMMAND_REGISTRY = map[string]func(*discordgo.Session, *discordgo.MessageCreate, string)string{"ai": testaiFunc,"help": helpFunc, "ping": pingFunc, "stats": statsFunc, "run":runFunc, "roast":roastFuncv2, "quiz": quizFunc } 
 
 func MessageHandlerv3(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if message.Author.ID == session.State.User.ID {
@@ -18,7 +18,7 @@ func MessageHandlerv3(session *discordgo.Session, message *discordgo.MessageCrea
 	user_command, argument, is_command := messageParser(msg)
 	if is_command {
 		if cmd_func, exists := COMMAND_REGISTRY[user_command]; exists {
-			output := cmd_func(message, argument)
+			output := cmd_func(session, message, argument)
 			output = fmt.Sprintf("```%s```",output)
 			session.ChannelMessageSend(message.ChannelID, output)
 		}

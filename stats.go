@@ -77,13 +77,6 @@ func getStats() (string, error) {
 	return result , nil
 }
 
-type ServerStats struct {
-	RAMUsedPercent  float64
-	CPUPercent 		float64
-	DiskUsedPercent float64
-	TempCelsius  	float64
-}
-
 func getRawStats() (ServerStats, error) {
 
 	cpu_cmd := `grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$3+$4+$5)} END {print usage"%"}'`
