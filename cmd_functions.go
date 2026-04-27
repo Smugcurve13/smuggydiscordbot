@@ -81,7 +81,7 @@ func roastFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, l
 	msgStruct := fetchMessagesofUserID(session, message, targetUserID, 6)
 	msgs := []string{}
 	msgs = msgStruct.Message
-	msgs2 := strings.Join(msgs, "")
+	msgs2 := strings.Join(msgs, ", ")
 	result := aiRoast(msgs2)
 	return result 
 }
@@ -122,7 +122,7 @@ func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, ar
 		}
 		contents := []*genai.Content{{Parts: parts}}
 
-		response, err := client.Models.GenerateContent(ctx, "gemini-flash-lite-latest", contents, nil)
+		response, err := client.Models.GenerateContent(ctx, "gemini-2.0-flash-lite", contents, nil)
 		if err != nil {
 			fmt.Printf("GenerateContent Error : %s" , err)
 			return "Please try again Later , Model is Overloaded right now"
