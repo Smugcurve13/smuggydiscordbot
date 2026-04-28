@@ -10,6 +10,8 @@ import (
 	"google.golang.org/genai"
 )
 
+var geminiModel = "gemma-3-27b-it" 
+
 func fetchMessagesofUserID(session *discordgo.Session, message *discordgo.MessageCreate, targetUserID string, noOfMessages int) UserMessage {
 	var userMessages []*discordgo.Message
 	messages, err := session.ChannelMessages(message.ChannelID, 100, "", "", "")
@@ -59,7 +61,7 @@ func aiRoast(msgs string) string {
 	}
 	contents := []*genai.Content{{Parts: parts}}
 
-	response, err := client.Models.GenerateContent(ctx, "gemini-2.0-flash-lite", contents, nil)
+	response, err := client.Models.GenerateContent(ctx, geminiModel, contents, nil)
 	if err != nil {
 		fmt.Printf("GenerateContent Error : %s" , err)
 		return "Please try again Later , Model is Overloaded right now"

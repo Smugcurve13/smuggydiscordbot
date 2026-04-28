@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"math/rand/v2"
 	"os"
 	"strings"
 	"time"
@@ -60,22 +59,6 @@ func runFunc(session *discordgo.Session, message *discordgo.MessageCreate, argum
 	}
 }
 
-func roastFunc(session *discordgo.Session, message *discordgo.MessageCreate, lastRoast string) string {
-	roasts := []string{"I’d agree with you, but then we’d both be wrong.",
-						"You’re the reason the gene pool needs a lifeguard.",
-						"I’ve been called worse by people who are much better.",
-						"You have the perfect face for radio and a great voice for silent films.",
-						"I forgot the world revolves around you. My apologies—how silly of me to think other people existed."}
-
-	idx := rand.IntN(len(roasts))
-	selection := roasts[idx]
-	if selection == lastRoast {
-		idx = (idx - 1) % len(roasts)
-		selection = roasts[idx]
-	} 
-	return selection
-}
-
 func roastFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, lastRoast string) string {
 	targetUserID := message.Author.ID
 	msgStruct := fetchMessagesofUserID(session, message, targetUserID, 6)
@@ -122,7 +105,7 @@ func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, ar
 		}
 		contents := []*genai.Content{{Parts: parts}}
 
-		response, err := client.Models.GenerateContent(ctx, "gemini-2.0-flash-lite", contents, nil)
+		response, err := client.Models.GenerateContent(ctx, geminiModel, contents, nil)
 		if err != nil {
 			fmt.Printf("GenerateContent Error : %s" , err)
 			return "Please try again Later , Model is Overloaded right now"
