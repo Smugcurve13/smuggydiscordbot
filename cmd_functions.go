@@ -12,7 +12,7 @@ import (
 )
 
 func helpFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
-	return "Available commands: !ping, !help, !stats and !run <command> <argument>"
+	return "Available commands: !roast, !ping, !help, !stats and !run <command> <argument>"
 }
 
 func pingFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
