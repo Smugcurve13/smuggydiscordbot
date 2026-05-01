@@ -60,12 +60,18 @@ func runFunc(session *discordgo.Session, message *discordgo.MessageCreate, argum
 }
 
 func roastFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, lastRoast string) string {
-	targetUserID := message.Author.ID
+	targetUserID := ""
+	if len(message.Mentions)>0 {
+		targetUserID = message.Mentions[0].ID
+	} else {
+		targetUserID = message.Author.ID
+	}
 	msgStruct := fetchMessagesofUserID(session, message, targetUserID, 6)
 	msgs := []string{}
 	msgs = msgStruct.Message
 	msgs2 := strings.Join(msgs, ", ")
 	result := aiRoast(msgs2)
+	// result := testingaiRoast(msgs2)
 	return result 
 }
 

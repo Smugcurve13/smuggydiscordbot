@@ -52,6 +52,7 @@ func aiRoast(msgs string) string {
 		- Be funny, not abusive
 		- Keep it short (2–3 lines)
 		- Focus on patterns in messages
+		- Only give the roast message , dont say anything else
 
 		Messages:\n
 		%s`, msgs)
@@ -68,4 +69,8 @@ func aiRoast(msgs string) string {
 	}
 	clean_response := cleanGeminiResponse(response)
 	return clean_response
+}
+
+func testingaiRoast(msgs string) string {
+	return "testing mode"
 }
