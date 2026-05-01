@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -73,4 +75,20 @@ func aiRoast(msgs string) string {
 
 func testingaiRoast(msgs string) string {
 	return "testing mode"
+}
+
+func getRoastTargetUser(message *discordgo.MessageCreate, argument string) (string, error)  {
+	targetUserID := ""
+	if len(message.Mentions)>0 {
+		targetUserID = message.Mentions[0].ID
+		mentionString := fmt.Sprintf("<@%s>", targetUserID)
+		argument = strings.Replace(argument, mentionString, "", 1)
+		argument = strings.TrimSpace(argument)
+		if argument != "" {
+			return "" ,errors.New("Invalid Roast Input")
+		}
+	} else {
+		targetUserID = message.Author.ID
+	}
+	return targetUserID , nil
 }

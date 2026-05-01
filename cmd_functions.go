@@ -59,12 +59,10 @@ func runFunc(session *discordgo.Session, message *discordgo.MessageCreate, argum
 	}
 }
 
-func roastFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, lastRoast string) string {
-	targetUserID := ""
-	if len(message.Mentions)>0 {
-		targetUserID = message.Mentions[0].ID
-	} else {
-		targetUserID = message.Author.ID
+func roastFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, argument string) string {
+	targetUserID, err := getRoastTargetUser(message, argument)
+	if err != nil {
+		return "Custom Arguments not allowed as of now"
 	}
 	msgStruct := fetchMessagesofUserID(session, message, targetUserID, 6)
 	msgs := []string{}
