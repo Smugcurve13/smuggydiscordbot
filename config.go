@@ -9,6 +9,8 @@ import (
 	"google.golang.org/genai"
 )
 
+var GUILD_GEMINI_KEY = map[string]string{}
+
 func getWhitelistedIDS() ([]string) {
 	ids := strings.Split(os.Getenv("WHITELISTED_USER_IDS"), ",")
 	WHITELISTED_IDS := []string{}
@@ -42,4 +44,12 @@ func cleanGeminiResponse(resp *genai.GenerateContentResponse) string {
 	}
 
 	return result
+}
+
+func setApiKeyHelper(guildID string, apikey string) {
+	GUILD_GEMINI_KEY[guildID] = apikey
+}
+
+func getApiKey(guildID string) string {
+	return GUILD_GEMINI_KEY[guildID]
 }

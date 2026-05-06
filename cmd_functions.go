@@ -121,4 +121,7 @@ func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, ar
 	}
 }
 
-
+func setKeyFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
+	setApiKeyHelper(message.GuildID, arg)
+	return "This API Key is now set , use !setkey to replace this key with new key"
+}

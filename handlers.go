@@ -7,10 +7,10 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var COMMAND_REGISTRY = map[string]func(*discordgo.Session, *discordgo.MessageCreate, string)string{"ai": testaiFunc,"help": helpFunc, "ping": pingFunc, "stats": statsFunc, "run":runFunc, "roast":roastFuncv2, "quiz": quizFunc } 
+var COMMAND_REGISTRY = map[string]func(*discordgo.Session, *discordgo.MessageCreate, string)string{"ai": testaiFunc,"help": helpFunc, "ping": pingFunc, "stats": statsFunc, "run":runFunc, "roast":roastFuncv2, "quiz": quizFunc, "setkey": setKeyFunc } 
 
 var SERVER_ALLOWED_COMMANDS = map[string][]string{
-	"1495404097535479958": {"ai", "help", "ping", "stats", "run", "roast", "quiz"}, // SmuggyDen
+	"1495404097535479958": {"ai", "help", "ping", "stats", "run", "roast", "quiz", "setkey"}, // SmuggyDen
 	"1340357023820415048": {"roast", "ping"}, // BadTrip Server
 	"786879993975144458" : {"roast", "ping"}, // Vibes Server (testing ground for command bifurcation)
 }
