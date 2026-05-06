@@ -89,6 +89,7 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 }
 
 func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
+	fmt.Printf("this is a test msg")
 	userID := message.Author.ID
 	found := false
 	WHITELISTED_IDS := getWhitelistedIDS()
@@ -120,5 +121,3 @@ func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, ar
 		return "Not Authorized"
 	}
 }
-
-
