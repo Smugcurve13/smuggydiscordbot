@@ -25,9 +25,13 @@ func MessageHandlerv3(session *discordgo.Session, message *discordgo.MessageCrea
 	// check if command is allowed in that guild
 	isAllowed := ifGuildAllowed(message.GuildID, userCommand)
 	if isCommand && isAllowed {
-		if cmd_func, exists := COMMAND_REGISTRY[userCommand]; exists {
+		if cmd_func, exists := COMMAND_REGISTRY[userCommand]; exists && userCommand != "gif" {
 			output := cmd_func(session, message, argument)
 			output = fmt.Sprintf("```%s```",output)
+			session.ChannelMessageSend(message.ChannelID, output)
+		} else {
+			output := cmd_func(session, message, argument)
+			output = fmt.Sprintf("%s",output)
 			session.ChannelMessageSend(message.ChannelID, output)
 		}
 	}
