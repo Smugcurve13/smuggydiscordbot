@@ -7,7 +7,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 )
-
+ 
 func startAlertMonitor(session *discordgo.Session) {
 	channel_id := os.Getenv("ALERT_CHANNEL_ID")
 	for {
