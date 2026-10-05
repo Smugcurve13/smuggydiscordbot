@@ -89,7 +89,6 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 }
 
 func gifFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
-	fmt.Println("func touched")
 	url := searchgifFunc(arg)
 	return url
 }
