@@ -10,6 +10,7 @@ import (
 
 func searchgifFunc(arg string) string {
 	klipyappKey := os.Getenv("KLIPY_APP_KEY")
+	fmt.Printf("the api_key is %s", klipyappKey)
 	url := "https://api.klipy.com/api/v1/%s/gifs/search?page=1&per_page=1&q=%s"
 	formattedURL := fmt.Sprintf(url, klipyappKey, arg)
 	method := "GET"
