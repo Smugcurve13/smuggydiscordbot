@@ -88,6 +88,11 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 	}
 }
 
+func gifFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
+	url := searchgifFunc(arg)
+	return url
+}
+
 func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
 	userID := message.Author.ID
 	found := false
