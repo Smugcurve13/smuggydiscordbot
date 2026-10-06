@@ -33,8 +33,9 @@ func main() {
 		fmt.Printf("Error in opening Discord Session : %v", discorderr)
 		os.Exit(1)
 	}
-
+	fmt.Println("\n=====================")
 	fmt.Println("Smuggy Bot is Running")
+	fmt.Println("=====================")
 	// dropdown(&discordgo.Session{},&discordgo.Message{} )
 
 	sigs := make(chan os.Signal, 1)
