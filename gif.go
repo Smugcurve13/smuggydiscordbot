@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+
 	"github.com/tidwall/gjson"
 )
 
@@ -14,6 +16,7 @@ func klipySearchResponseParserFunc(body string) string {
 }
 
 func searchgifFunc(arg string) string {
+	arg = url.QueryEscape(arg)
 	klipyappKey := os.Getenv("KLIPY_APP_KEY")
 	url := "https://api.klipy.com/api/v1/%s/gifs/search?page=1&per_page=1&q=%s"
 	formattedURL := fmt.Sprintf(url, klipyappKey, arg)
