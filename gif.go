@@ -59,13 +59,9 @@ func reactgifFunc(arg string, reply *discordgo.MessageReference) string {
 	// names of buckets
 	// phrases in the buckets
 	// smash the arg at the bucket
-	fmt.Println("true at top")
 	if reply != nil{
-		fmt.Println("true in func")
 		phrase := fetchfromBucket(arg)
-		fmt.Println(phrase)
 		url := searchgifFunc(phrase)
-		fmt.Println(url)
 		return url
 	} else {
 		return "Beep Boop!!\nINCORRECT USAGE DETECTED!!\nReply to someone using \n```!gif react```"

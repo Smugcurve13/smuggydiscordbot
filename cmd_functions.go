@@ -91,8 +91,13 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 
 func gifFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
 	if arg == "react" {
-		reply := message.MessageReference
-		url := reactgifFunc(arg,reply)
+		channelID := message.MessageReference.ChannelID
+		messageID := message.MessageReference.MessageID
+		msg, err := session.ChannelMessage(channelID, messageID)
+		if err != nil {
+			log.Printf("Error Retriving message: %v", err)
+		}
+		url := reactgifFunc(msg.Content,message.MessageReference)
 		return url
 	} else if arg != "" {
 		url := searchgifFunc(arg)
