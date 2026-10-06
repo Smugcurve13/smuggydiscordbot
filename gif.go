@@ -8,6 +8,11 @@ import (
 	"github.com/tidwall/gjson"
 )
 
+func klipySearchResponseParserFunc(body string) string {
+	url := gjson.Get(body, "data.data.0.file.hd.gif.url")
+	return url.Str
+}
+
 func searchgifFunc(arg string) string {
 	klipyappKey := os.Getenv("KLIPY_APP_KEY")
 	url := "https://api.klipy.com/api/v1/%s/gifs/search?page=1&per_page=1&q=%s"
@@ -38,9 +43,4 @@ func searchgifFunc(arg string) string {
 	body_str := (string(body))
 	gif_url := klipySearchResponseParserFunc(body_str)
 	return gif_url
-}
-
-func klipySearchResponseParserFunc(body string) string {
-	url := gjson.Get(body, "data.data.0.file.hd.gif.url")
-	return url.Str
 }

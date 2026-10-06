@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -88,9 +89,22 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 	}
 }
 
-func gifFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
-	url := searchgifFunc(arg)
-	return url
+func gifFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
+	if arg != "" {
+		url := searchgifFunc(arg)
+		return url
+	} else if arg == "" && message.MessageReference != nil {
+		channelID := message.MessageReference.ChannelID
+		messageID := message.MessageReference.MessageID
+		msg, err := session.ChannelMessage(channelID, messageID)
+		if err != nil {
+			log.Printf("Error Retriving message: %v", err)
+		}
+		url := searchgifFunc(msg.Content)
+		return url
+	} else {
+		return "Beep Beep!!\nTo use !gif add a <query> beside it \nFor ex ```!gif shocked pikachu```\nor reply to someone's message to get a gif reacting to them"
+	}
 }
 
 func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
