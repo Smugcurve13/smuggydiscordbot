@@ -90,7 +90,11 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 }
 
 func gifFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
-	if arg != "" {
+	if arg == "react" {
+		reply := message.MessageReference
+		url := reactgifFunc(arg,reply)
+		return url
+	} else if arg != "" {
 		url := searchgifFunc(arg)
 		return url
 	} else if arg == "" && message.MessageReference != nil {

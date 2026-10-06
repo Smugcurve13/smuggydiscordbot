@@ -7,3 +7,5 @@ TODOS
 2. Trivia game (!quiz) on pause for now
 3. Allow specific commands for specific servers (hardcoded for now) 
 4. Tie api keys to guildids and use the respective api key
+5. ~~add gif functionality~~ add reactive gif functionality
+6. add music functionality
