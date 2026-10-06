@@ -90,7 +90,11 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 }
 
 func gifFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
-	if arg != "" {
+	if arg == "react" {
+		reply := message.MessageReference
+		url := reactgifFunc(arg,reply)
+		return url
+	} else if arg != "" {
 		url := searchgifFunc(arg)
 		return url
 	} else if arg == "" && message.MessageReference != nil {
@@ -102,10 +106,6 @@ func gifFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, arg
 		}
 		url := searchgifFunc(msg.Content)
 		return url
-	} else if  arg == "react" {
-		url := reactgifFunc(arg)
-		return url
-
 	} else {
 		return "Beep Beep!!\nTo use !gif add a <query> beside it \nFor ex ```!gif shocked pikachu```\nor reply to someone's message to get a gif reacting to them"
 	}

@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+
+	"github.com/bwmarrin/discordgo"
 	"github.com/tidwall/gjson"
 )
 
@@ -14,6 +17,7 @@ func klipySearchResponseParserFunc(body string) string {
 }
 
 func searchgifFunc(arg string) string {
+	arg = url.QueryEscape(arg)
 	klipyappKey := os.Getenv("KLIPY_APP_KEY")
 	url := "https://api.klipy.com/api/v1/%s/gifs/search?page=1&per_page=1&q=%s"
 	formattedURL := fmt.Sprintf(url, klipyappKey, arg)
@@ -45,9 +49,26 @@ func searchgifFunc(arg string) string {
 	return gif_url
 }
 
-func reactgifFunc(arg string) string {
-	// search the phrase against 6 buckets
-	// classify the phrase with a bucket
+func reactgifFunc(arg string, reply *discordgo.MessageReference) string {
+	// search the arg against 6 buckets
+	// classify the arg with a bucket
 	// randomise a phrase from that bucket
 	// return the url
+
+	// we need buckets to store 
+	// names of buckets
+	// phrases in the buckets
+	// smash the arg at the bucket
+	fmt.Println("true at top")
+	if reply != nil{
+		fmt.Println("true in func")
+		phrase := fetchfromBucket(arg)
+		fmt.Println(phrase)
+		url := searchgifFunc(phrase)
+		fmt.Println(url)
+		return url
+	} else {
+		return "Beep Boop!!\nINCORRECT USAGE DETECTED!!\nReply to someone using \n```!gif react```"
+	}
+	
 }
