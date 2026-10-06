@@ -73,7 +73,6 @@ func getStats() (string, error) {
 		fmt.Println("Error while excecuting TEMPERATURE stats command")
 	}
 	result := fmt.Sprintf("\nSmuggyServer Stats\n\nRAM:\n%v\nCPU:\n%v\nDISK:\n%v\nTEMPERATURE:\n%v\n", ram, cpu, disk, temp)
-	fmt.Println(result)
 	return result , nil
 }
 
