@@ -11,7 +11,7 @@ var COMMAND_REGISTRY = map[string]func(*discordgo.Session, *discordgo.MessageCre
 
 var SERVER_ALLOWED_COMMANDS = map[string][]string{
 	"1495404097535479958": {"ai", "help", "ping", "stats", "run", "roast", "quiz", "gif"}, // SmuggyDen
-	"1340357023820415048": {"roast", "ping", "gif"}, // BadTrip Server
+	"1340357023820415048": {"help", "ping", "roast", "gif"}, // BadTrip Server
 	"786879993975144458" : {"roast", "ping"}, // Vibes Server (testing ground for command bifurcation)
 }
 
