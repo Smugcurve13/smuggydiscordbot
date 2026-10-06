@@ -44,3 +44,10 @@ func searchgifFunc(arg string) string {
 	gif_url := klipySearchResponseParserFunc(body_str)
 	return gif_url
 }
+
+func reactgifFunc(arg string) string {
+	// search the phrase against 6 buckets
+	// classify the phrase with a bucket
+	// randomise a phrase from that bucket
+	// return the url
+}

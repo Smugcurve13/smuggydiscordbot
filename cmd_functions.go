@@ -102,6 +102,10 @@ func gifFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, arg
 		}
 		url := searchgifFunc(msg.Content)
 		return url
+	} else if  arg == "react" {
+		url := reactgifFunc(arg)
+		return url
+
 	} else {
 		return "Beep Beep!!\nTo use !gif add a <query> beside it \nFor ex ```!gif shocked pikachu```\nor reply to someone's message to get a gif reacting to them"
 	}
