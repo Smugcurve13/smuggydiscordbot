@@ -15,7 +15,7 @@ func startAlertMonitor(session *discordgo.Session) {
 		if err != nil {
 			fmt.Printf("Error while fetching raw Stats : %v", err)
 		}
-		fmt.Printf("CPU: %.2f%% | RAM: %.2f%% | Disk: %.2f%% | Temp: %.2f°C\n", stats.CPUPercent, stats.RAMUsedPercent, stats.DiskUsedPercent, stats.TempCelsius)
+		// fmt.Printf("CPU: %.2f%% | RAM: %.2f%% | Disk: %.2f%% | Temp: %.2f°C\n", stats.CPUPercent, stats.RAMUsedPercent, stats.DiskUsedPercent, stats.TempCelsius)
 		if stats.TempCelsius > 80 {
 			session.ChannelMessageSend(channel_id, fmt.Sprintf("⚠️ HIGH TEMP ALERT: %.2f°C",stats.TempCelsius))
 		}

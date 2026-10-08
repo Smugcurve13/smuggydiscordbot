@@ -3,14 +3,45 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 
+	"resty.dev/v3"
 	"github.com/bwmarrin/discordgo"
 
 	"github.com/tidwall/gjson"
 )
+
+func cloudflareEmbedFunc(arg string, bucketDescriptionList []string) []string {
+	AccountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	ApiKey := os.Getenv("CLOUDFLARE_API_TOKEN")
+	url := "https://api.cloudflare.com/client/v4/accounts/%s/ai/run/@cf/baai/bge-small-en-v1.5"
+	formattedUrl := fmt.Sprintf(url, AccountID)
+	payloadList := append([]string{arg},bucketDescriptionList...)
+	payload := map[string]any{"text": payloadList}
+	client := resty.New()
+
+	resp, err := client.R().
+			SetHeader("Content-Type", "application-json").
+			SetAuthToken(ApiKey).
+			SetBody(payload).
+			Post(formattedUrl)
+	
+	if err != nil {
+		log.Printf("Error in CloudFlare Embed Func : %v , status code : %v", err, resp.StatusCode())
+		return []string{err.Error()}
+	}
+	vectorList := gjson.Get(resp.String(), "result.data")
+	// fmt.Println("Response:", vectorList.String())
+	vectorResult := vectorList.Array()
+	var vectorSlice []string
+	for _, vector := range vectorResult {
+		vectorSlice = append(vectorSlice, vector.String())
+	}
+	return vectorSlice
+}
 
 func klipySearchResponseParserFunc(body string) string {
 	url := gjson.Get(body, "data.data.0.file.hd.gif.url")
@@ -51,22 +82,9 @@ func searchgifFunc(arg string) string {
 }
 
 func reactgifFunc(arg string, reply *discordgo.MessageReference) string {
-	// search the arg against 6 buckets
-	// classify the arg with a bucket
-	// randomise a phrase from that bucket
-	// return the url
-
-	// we need buckets to store 
-	// names of buckets
-	// phrases in the buckets
-	// smash the arg at the bucket
-	fmt.Println("true at top")
 	if reply != nil{
-		fmt.Println("true in func")
 		phrase := fetchfromBucket(arg)
-		fmt.Println(phrase)
 		url := searchgifFunc(phrase)
-		fmt.Println(url)
 		return url
 	} else {
 		return "Beep Boop!!\nINCORRECT USAGE DETECTED!!\nReply to someone using \n```!gif react```"
