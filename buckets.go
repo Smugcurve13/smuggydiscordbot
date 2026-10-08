@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"maps"
 	"math/rand/v2"
+	"slices"
 )
 
 var collection = map[string][]string{
@@ -60,8 +63,16 @@ var bucketDescriptions = map[string]string{
 }
 
 func fetchfromBucket(arg string) string {
-	bucketPhrases := collection["shock"]
+	closestBucket := findClosestBucket(arg)
+	bucketPhrases := collection[closestBucket]
 	randomPhraseIndex := rand.N(len(bucketPhrases))
 	selectedPhrase := bucketPhrases[randomPhraseIndex]
 	return selectedPhrase
+}
+
+func findClosestBucket(arg string) string {
+	bucketDescriptionsList := slices.Collect(maps.Values(bucketDescriptions))
+	vectorList := cloudflareEmbedFunc(arg, bucketDescriptionsList)
+	fmt.Println("/n", vectorList)
+	return "shock"
 }

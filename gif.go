@@ -13,13 +13,13 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func cloudflareEmbedFunc(arg string, description string) string {
+func cloudflareEmbedFunc(arg string, bucketDescriptionList []string) []string {
 	AccountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 	ApiKey := os.Getenv("CLOUDFLARE_API_TOKEN")
 	url := "https://api.cloudflare.com/client/v4/accounts/%s/ai/run/@cf/baai/bge-small-en-v1.5"
 	formattedUrl := fmt.Sprintf(url, AccountID)
-
-	payload := map[string]any{"text": []string{arg,description}}
+	payloadList := append([]string{arg},bucketDescriptionList...)
+	payload := map[string]any{"text": payloadList}
 	client := resty.New()
 
 	resp, err := client.R().
@@ -30,11 +30,16 @@ func cloudflareEmbedFunc(arg string, description string) string {
 	
 	if err != nil {
 		log.Printf("Error in CloudFlare Embed Func : %v , status code : %v", err, resp.StatusCode())
-		return ""
+		return []string{err.Error()}
 	}
-	vector := gjson.Get(resp.String(), "result.data.1")
-	fmt.Println("Response:", vector.String())
-	return ""
+	vectorList := gjson.Get(resp.String(), "result.data")
+	// fmt.Println("Response:", vectorList.String())
+	vectorResult := vectorList.Array()
+	var vectorSlice []string
+	for _, vector := range vectorResult {
+		vectorSlice = append(vectorSlice, vector.String())
+	}
+	return vectorSlice
 }
 
 func klipySearchResponseParserFunc(body string) string {
@@ -86,6 +91,7 @@ func reactgifFunc(arg string, reply *discordgo.MessageReference) string {
 	// phrases in the buckets
 	// smash the arg at the bucket
 	if reply != nil{
+		
 		phrase := fetchfromBucket(arg)
 		url := searchgifFunc(phrase)
 		return url
