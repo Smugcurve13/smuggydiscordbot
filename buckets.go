@@ -49,6 +49,16 @@ var collection = map[string][]string{
 	},
 }
 
+var bucketDescriptions = map[string]string{
+	"shock":    "A message expresses surprise, disbelief, or something mind-blowing.",
+	"laugh":    "A message is funny, ridiculous, or makes people laugh.",
+	"hype":     "A message celebrates a win, success, excitement, or an impressive achievement.",
+	"panic":    "A message describes a problem, disaster, danger, or an alarming situation.",
+	"cringe":   "A message is awkward, embarrassing, uncomfortable, or painfully bad.",
+	"sad":      "A message shares disappointment, loss, bad news, or emotional sadness.",
+	"confused": "A message is strange, unclear, nonsensical, or difficult to understand.",
+}
+
 func fetchfromBucket(arg string) string {
 	bucketPhrases := collection["shock"]
 	randomPhraseIndex := rand.N(len(bucketPhrases))
