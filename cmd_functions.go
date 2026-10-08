@@ -44,7 +44,7 @@ func runFunc(session *discordgo.Session, message *discordgo.MessageCreate, argum
 			msg := "Invalid usage: missing command\n\nUsage:\n!run <command>\n\nExample:\n!run echo hello"
 			return msg
 		}
-		BLACKLIST_CMDS := []string{"rm -rf", "mkfs", "dd", "shutdown","test"}
+		BLACKLIST_CMDS := []string{"rm -rf", "mkfs", "dd", "shutdown", "test"}
 		for _, cmd := range BLACKLIST_CMDS {
 			if strings.Contains(argument, cmd) {
 				return "Galat command dalta hai! Try Again"
@@ -71,14 +71,14 @@ func roastFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, a
 	msgs2 := strings.Join(msgs, ", ")
 	result := aiRoast(msgs2)
 	// result := testingaiRoast(msgs2)
-	return result 
+	return result
 }
 
 func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
 	// userId := message.Author.ID
 	db := QuizDB{
-		question: "What is smuggy's favourite number",
-		options:[]string{"420","67","69","786"},
+		question:  "What is smuggy's favourite number",
+		options:   []string{"420", "67", "69", "786"},
 		answer_id: 0,
 	}
 	selection := 0
@@ -91,13 +91,16 @@ func quizFunc(session *discordgo.Session, message *discordgo.MessageCreate, arg 
 
 func gifFuncv2(session *discordgo.Session, message *discordgo.MessageCreate, arg string) string {
 	if arg == "react" {
+		if message.MessageReference == nil {
+			return "Beep Boop!!\nINCORRECT USAGE DETECTED!!\nReply to someone using \n```!gif react```"
+		}
 		channelID := message.MessageReference.ChannelID
 		messageID := message.MessageReference.MessageID
 		msg, err := session.ChannelMessage(channelID, messageID)
 		if err != nil {
 			log.Printf("Error Retriving message: %v", err)
 		}
-		url := reactgifFunc(msg.Content,message.MessageReference)
+		url := reactgifFunc(msg.Content, message.MessageReference)
 		return url
 	} else if arg != "" {
 		url := searchgifFunc(arg)
@@ -139,7 +142,7 @@ func testaiFunc(session *discordgo.Session, message *discordgo.MessageCreate, ar
 
 		response, err := client.Models.GenerateContent(ctx, geminiModel, contents, nil)
 		if err != nil {
-			fmt.Printf("GenerateContent Error : %s" , err)
+			fmt.Printf("GenerateContent Error : %s", err)
 			return "Please try again Later , Model is Overloaded right now"
 		}
 		clean_response := cleanGeminiResponse(response)

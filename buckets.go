@@ -73,9 +73,9 @@ func fetchfromBucket(arg string) string {
 
 func findClosestBucket(arg string) string {
 	var bucketDescriptionsList []string
-	
+
 	bucketKeys := []string{"shock", "laugh", "hype", "panic", "cringe", "sad", "confused"}
-	
+
 	for _, bucket := range bucketKeys {
 		description := bucketDescriptions[bucket]
 		bucketDescriptionsList = append(bucketDescriptionsList, description)
@@ -100,15 +100,15 @@ func findClosestBucket(arg string) string {
 	var similarityList []float64
 
 	for _, vector := range bucketVectorCollection {
-		simScore, err := CosineSimilarity(vector, bucketVectorCollection[0])
+		simScore, err := CosineSimilarity(replyVector, vector)
 		if err != nil {
 			log.Printf("Error : %v", err)
 		}
 		similarityList = append(similarityList, simScore)
 	}
-	
-	simIndex, err := findHighestIndex(replyVector[0], similarityList)
-	
+
+	simIndex, err := findHighestIndex(similarityList)
+
 	simKey := bucketKeys[simIndex]
 
 	return simKey
@@ -147,19 +147,18 @@ func CosineSimilarity(vecA, vecB []float64) (float64, error) {
 	return dotProduct / (math.Sqrt(normA) * math.Sqrt(normB)), nil
 }
 
-func findHighestIndex(target float64, values []float64) (int, error) {
+func findHighestIndex(values []float64) (int, error) {
 	if len(values) == 0 {
 		return 0, errors.New("the slice cannot be empty")
 	}
 
-	// Initialize highest with the target value
-	highest := target
-	var highestIndex int
+	highest := values[0]
+	highestIndex := 0
 
-	// Loop through all values to find the absolute maximum
 	for idx, val := range values {
 		if val > highest {
 			highestIndex = idx
+			highest = val
 		}
 	}
 	return highestIndex, nil
