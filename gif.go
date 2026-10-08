@@ -3,13 +3,39 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 
+	"resty.dev/v3"
 	"github.com/bwmarrin/discordgo"
 	"github.com/tidwall/gjson"
 )
+
+func cloudflareEmbedFunc(arg string, description string) string {
+	AccountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	ApiKey := os.Getenv("CLOUDFLARE_API_TOKEN")
+	url := "https://api.cloudflare.com/client/v4/accounts/%s/ai/run/@cf/baai/bge-small-en-v1.5"
+	formattedUrl := fmt.Sprintf(url, AccountID)
+
+	payload := map[string]any{"text": []string{arg,description}}
+	client := resty.New()
+
+	resp, err := client.R().
+			SetHeader("Content-Type", "application-json").
+			SetAuthToken(ApiKey).
+			SetBody(payload).
+			Post(formattedUrl)
+	
+	if err != nil {
+		log.Printf("Error in CloudFlare Embed Func : %v , status code : %v", err, resp.StatusCode())
+		return ""
+	}
+	vector := gjson.Get(resp.String(), "result.data.1")
+	fmt.Println("Response:", vector.String())
+	return ""
+}
 
 func klipySearchResponseParserFunc(body string) string {
 	url := gjson.Get(body, "data.data.0.file.hd.gif.url")
