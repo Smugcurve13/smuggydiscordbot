@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"math"
 	"math/rand/v2"
@@ -57,8 +56,8 @@ var collection = map[string][]string{
 var bucketDescriptions = map[string]string{
 	"shock":    "A message expresses surprise, disbelief, or something mind-blowing.",
 	"laugh":    "A message is funny, ridiculous, or makes people laugh.",
-	"hype":     "A message celebrates vecA win, success, excitement, or an impressive achievement.",
-	"panic":    "A message describes vecA problem, disaster, danger, or an alarming situation.",
+	"hype":     "A message celebrates a win, success, excitement, or an impressive achievement.",
+	"panic":    "A message describes a problem, disaster, danger, or an alarming situation.",
 	"cringe":   "A message is awkward, embarrassing, uncomfortable, or painfully bad.",
 	"sad":      "A message shares disappointment, loss, bad news, or emotional sadness.",
 	"confused": "A message is strange, unclear, nonsensical, or difficult to understand.",
@@ -74,7 +73,9 @@ func fetchfromBucket(arg string) string {
 
 func findClosestBucket(arg string) string {
 	var bucketDescriptionsList []string
+	
 	bucketKeys := []string{"shock", "laugh", "hype", "panic", "cringe", "sad", "confused"}
+	
 	for _, bucket := range bucketKeys {
 		description := bucketDescriptions[bucket]
 		bucketDescriptionsList = append(bucketDescriptionsList, description)
@@ -84,9 +85,10 @@ func findClosestBucket(arg string) string {
 	replyVector, err := parseEmbeddingVector(vectorList[0])
 	if err != nil {
 		log.Printf("Error in parseEmbeddingVector: %s", err)
-	}	
+	}
 
 	var bucketVectorCollection [][]float64
+
 	for _, vector := range vectorList[1:] {
 		bucketVector, err := parseEmbeddingVector(vector)
 		if err != nil {
@@ -104,11 +106,12 @@ func findClosestBucket(arg string) string {
 		}
 		similarityList = append(similarityList, simScore)
 	}
+	
+	simIndex, err := findHighestIndex(replyVector[0], similarityList)
+	
+	simKey := bucketKeys[simIndex]
 
-	fmt.Printf("/nSim list: %v", similarityList)
-
-
-	return "shock"
+	return simKey
 }
 
 func parseEmbeddingVector(vectorString string) ([]float64, error) {
@@ -142,4 +145,22 @@ func CosineSimilarity(vecA, vecB []float64) (float64, error) {
 	}
 
 	return dotProduct / (math.Sqrt(normA) * math.Sqrt(normB)), nil
+}
+
+func findHighestIndex(target float64, values []float64) (int, error) {
+	if len(values) == 0 {
+		return 0, errors.New("the slice cannot be empty")
+	}
+
+	// Initialize highest with the target value
+	highest := target
+	var highestIndex int
+
+	// Loop through all values to find the absolute maximum
+	for idx, val := range values {
+		if val > highest {
+			highestIndex = idx
+		}
+	}
+	return highestIndex, nil
 }

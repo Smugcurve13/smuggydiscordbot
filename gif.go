@@ -81,17 +81,7 @@ func searchgifFunc(arg string) string {
 }
 
 func reactgifFunc(arg string, reply *discordgo.MessageReference) string {
-	// search the arg against 6 buckets
-	// classify the arg with a bucket
-	// randomise a phrase from that bucket
-	// return the url
-
-	// we need buckets to store 
-	// names of buckets
-	// phrases in the buckets
-	// smash the arg at the bucket
 	if reply != nil{
-		
 		phrase := fetchfromBucket(arg)
 		url := searchgifFunc(phrase)
 		return url
