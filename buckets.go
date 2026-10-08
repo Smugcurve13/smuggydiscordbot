@@ -1,10 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"maps"
+	"log"
 	"math/rand/v2"
-	"slices"
 )
 
 var collection = map[string][]string{
@@ -71,8 +71,39 @@ func fetchfromBucket(arg string) string {
 }
 
 func findClosestBucket(arg string) string {
-	bucketDescriptionsList := slices.Collect(maps.Values(bucketDescriptions))
+	var bucketDescriptionsList []string
+	bucketKeys := []string{"shock", "laugh", "hype", "panic", "cringe", "sad", "confused"}
+	for _, bucket := range bucketKeys {
+		description := bucketDescriptions[bucket]
+		bucketDescriptionsList = append(bucketDescriptionsList, description)
+	}
+
 	vectorList := cloudflareEmbedFunc(arg, bucketDescriptionsList)
-	fmt.Println("/n", vectorList)
+	replyVector, err := parseEmbeddingVector(vectorList[0])
+	if err != nil {
+		log.Printf("Error in parseEmbeddingVector: %s", err)
+	}
+
+	var bucketVectorCollection [][]float64
+	for _, vector := range vectorList[1:] {
+		bucketVector, err := parseEmbeddingVector(vector)
+		if err != nil {
+			log.Printf("Error in parseEmbeddingVector: %s", err)
+		}
+		bucketVectorCollection = append(bucketVectorCollection, bucketVector)
+	}
+	fmt.Printf("%v description vectors", len(bucketVectorCollection))
+	fmt.Printf("each containing %v numbers", len(bucketVectorCollection[0]))
+	fmt.Print(replyVector)
 	return "shock"
+}
+
+func parseEmbeddingVector(vectorString string) ([]float64, error) {
+	var vector []float64
+
+	if err := json.Unmarshal([]byte(vectorString), &vector); err != nil {
+		return nil, err
+	}
+
+	return vector, nil
 }
