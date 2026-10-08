@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"math"
 	"math/rand/v2"
 )
 
@@ -55,8 +57,8 @@ var collection = map[string][]string{
 var bucketDescriptions = map[string]string{
 	"shock":    "A message expresses surprise, disbelief, or something mind-blowing.",
 	"laugh":    "A message is funny, ridiculous, or makes people laugh.",
-	"hype":     "A message celebrates a win, success, excitement, or an impressive achievement.",
-	"panic":    "A message describes a problem, disaster, danger, or an alarming situation.",
+	"hype":     "A message celebrates vecA win, success, excitement, or an impressive achievement.",
+	"panic":    "A message describes vecA problem, disaster, danger, or an alarming situation.",
 	"cringe":   "A message is awkward, embarrassing, uncomfortable, or painfully bad.",
 	"sad":      "A message shares disappointment, loss, bad news, or emotional sadness.",
 	"confused": "A message is strange, unclear, nonsensical, or difficult to understand.",
@@ -82,7 +84,7 @@ func findClosestBucket(arg string) string {
 	replyVector, err := parseEmbeddingVector(vectorList[0])
 	if err != nil {
 		log.Printf("Error in parseEmbeddingVector: %s", err)
-	}
+	}	
 
 	var bucketVectorCollection [][]float64
 	for _, vector := range vectorList[1:] {
@@ -92,9 +94,20 @@ func findClosestBucket(arg string) string {
 		}
 		bucketVectorCollection = append(bucketVectorCollection, bucketVector)
 	}
-	fmt.Printf("%v description vectors", len(bucketVectorCollection))
-	fmt.Printf("each containing %v numbers", len(bucketVectorCollection[0]))
-	fmt.Print(replyVector)
+
+	var similarityList []float64
+
+	for _, vector := range bucketVectorCollection {
+		simScore, err := CosineSimilarity(vector, bucketVectorCollection[0])
+		if err != nil {
+			log.Printf("Error : %v", err)
+		}
+		similarityList = append(similarityList, simScore)
+	}
+
+	fmt.Printf("/nSim list: %v", similarityList)
+
+
 	return "shock"
 }
 
@@ -106,4 +119,27 @@ func parseEmbeddingVector(vectorString string) ([]float64, error) {
 	}
 
 	return vector, nil
+}
+
+func CosineSimilarity(vecA, vecB []float64) (float64, error) {
+	if len(vecA) != len(vecB) {
+		return 0, errors.New("vectors must have the same length")
+	}
+	if len(vecA) == 0 {
+		return 0, errors.New("vectors cannot be empty")
+	}
+
+	var dotProduct, normA, normB float64
+
+	for i := 0; i < len(vecA); i++ {
+		dotProduct += vecA[i] * vecB[i]
+		normA += vecA[i] * vecA[i]
+		normB += vecB[i] * vecB[i]
+	}
+
+	if normA == 0 || normB == 0 {
+		return 0, errors.New("vector magnitude cannot be zero")
+	}
+
+	return dotProduct / (math.Sqrt(normA) * math.Sqrt(normB)), nil
 }
