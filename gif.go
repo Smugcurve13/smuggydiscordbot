@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand/v2"
 	"net/http"
 	"net/url"
 	"os"
 
-	"resty.dev/v3"
 	"github.com/bwmarrin/discordgo"
+	"resty.dev/v3"
 
 	"github.com/tidwall/gjson"
 )
@@ -19,16 +20,16 @@ func cloudflareEmbedFunc(arg string, bucketDescriptionList []string) []string {
 	ApiKey := os.Getenv("CLOUDFLARE_API_TOKEN")
 	url := "https://api.cloudflare.com/client/v4/accounts/%s/ai/run/@cf/baai/bge-small-en-v1.5"
 	formattedUrl := fmt.Sprintf(url, AccountID)
-	payloadList := append([]string{arg},bucketDescriptionList...)
+	payloadList := append([]string{arg}, bucketDescriptionList...)
 	payload := map[string]any{"text": payloadList}
 	client := resty.New()
 
 	resp, err := client.R().
-			SetHeader("Content-Type", "application-json").
-			SetAuthToken(ApiKey).
-			SetBody(payload).
-			Post(formattedUrl)
-	
+		SetHeader("Content-Type", "application-json").
+		SetAuthToken(ApiKey).
+		SetBody(payload).
+		Post(formattedUrl)
+
 	if err != nil {
 		log.Printf("Error in CloudFlare Embed Func : %v , status code : %v", err, resp.StatusCode())
 		return []string{err.Error()}
@@ -44,14 +45,19 @@ func cloudflareEmbedFunc(arg string, bucketDescriptionList []string) []string {
 }
 
 func klipySearchResponseParserFunc(body string) string {
-	url := gjson.Get(body, "data.data.0.file.hd.gif.url")
-	return url.Str
+	gifSlice := gjson.Get(body, "data.data").Array()
+	if len(gifSlice) == 0 {
+		return ""
+	}
+
+	randomGifObj := gifSlice[rand.IntN(len(gifSlice))]
+	return randomGifObj.Get("file.hd.gif.url").String()
 }
 
 func searchgifFunc(arg string) string {
 	arg = url.QueryEscape(arg)
 	klipyappKey := os.Getenv("KLIPY_APP_KEY")
-	url := "https://api.klipy.com/api/v1/%s/gifs/search?page=1&per_page=1&q=%s"
+	url := "https://api.klipy.com/api/v1/%s/gifs/search?page=1&per_page=10&q=%s"
 	formattedURL := fmt.Sprintf(url, klipyappKey, arg)
 	method := "GET"
 
@@ -82,12 +88,12 @@ func searchgifFunc(arg string) string {
 }
 
 func reactgifFunc(arg string, reply *discordgo.MessageReference) string {
-	if reply != nil{
+	if reply != nil {
 		phrase := fetchfromBucket(arg)
 		url := searchgifFunc(phrase)
 		return url
 	} else {
 		return "Beep Boop!!\nINCORRECT USAGE DETECTED!!\nReply to someone using \n```!gif react```"
 	}
-	
+
 }
