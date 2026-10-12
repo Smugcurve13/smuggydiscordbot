@@ -8,12 +8,16 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sync"
 
 	"github.com/bwmarrin/discordgo"
 	"resty.dev/v3"
 
 	"github.com/tidwall/gjson"
 )
+
+var lastGifURL string
+var lastGifURLMu sync.Mutex
 
 func cloudflareEmbedFunc(arg string, bucketDescriptionList []string) []string {
 	AccountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
@@ -50,8 +54,32 @@ func klipySearchResponseParserFunc(body string) string {
 		return ""
 	}
 
-	randomGifObj := gifSlice[rand.IntN(len(gifSlice))]
-	return randomGifObj.Get("file.hd.gif.url").String()
+	lastGifURLMu.Lock()
+	defer lastGifURLMu.Unlock()
+
+	// ponytail: remembers only the last URL in-process; add per-query history only if repeats remain a problem.
+	gifURLs := make([]string, 0, len(gifSlice))
+	for _, gif := range gifSlice {
+		gifURL := gif.Get("file.hd.gif.url").String()
+		if gifURL != "" && gifURL != lastGifURL {
+			gifURLs = append(gifURLs, gifURL)
+		}
+	}
+
+	if len(gifURLs) == 0 {
+		for _, gif := range gifSlice {
+			if gifURL := gif.Get("file.hd.gif.url").String(); gifURL != "" {
+				gifURLs = append(gifURLs, gifURL)
+			}
+		}
+	}
+	if len(gifURLs) == 0 {
+		return ""
+	}
+
+	gifURL := gifURLs[rand.IntN(len(gifURLs))]
+	lastGifURL = gifURL
+	return gifURL
 }
 
 func searchgifFunc(arg string) string {
